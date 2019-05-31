@@ -1,5 +1,14 @@
 package com.ionep.weather;
 
+import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
@@ -11,19 +20,21 @@ import com.ionep.weather.model.PreparationState;
 import io.smallrye.reactive.messaging.annotations.Emitter;
 import io.smallrye.reactive.messaging.annotations.Stream;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-
 @ApplicationScoped
 public class KafkaForecaster {
 
     @ConfigProperty(name = "forecaster.name")
+    String baseName;
+    
     String name;
+    
+    // Generate pseudo-random name
+    public KafkaForecaster() {
+    	double rd = Math.random();
+        String s = String.valueOf(rd);
+        
+    	this.name = baseName + s.substring(0, 3);
+    }
 
     private Jsonb jsonb = JsonbBuilder.create();
     private Random random = new Random();
