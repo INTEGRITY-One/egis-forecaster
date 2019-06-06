@@ -26,14 +26,14 @@ public class KafkaForecaster {
     @ConfigProperty(name = "forecaster.name")
     String baseName;
     
-    String name;
+    String name = null;
     
     // Generate pseudo-random name
-    public KafkaForecaster() {
+    private void assignName() {
     	double rd = Math.random();
         String s = String.valueOf(rd);
         
-    	this.name = baseName + s.substring(0, 3);
+    	this.name = baseName + s.substring(2, 4);
     }
 
     private Jsonb jsonb = JsonbBuilder.create();
@@ -46,7 +46,11 @@ public class KafkaForecaster {
     @Incoming("requests")
     @Outgoing("queue")
     public CompletionStage<String> prepare(String message) {
-        ForecastRequest request = jsonb.fromJson(message, ForecastRequest.class);
+        // Only do this once!
+    	if (this.name == null)
+        	assignName();
+    	
+    	ForecastRequest request = jsonb.fromJson(message, ForecastRequest.class);
         System.out.println("Forecaster " + name + " is going to make a prediction for " + request.getCityName());
         
         // reflect the fact that the request has been picked up & is being processed...
