@@ -1,8 +1,20 @@
 pipeline {
   agent {
-  	label 'maven'
+  	any
+  }
+  tools { 
+    maven 'Maven 3.6.1' 
+    jdk 'jdk8' 
   }
   stages {
+    stage('Initialization') {
+      steps {
+        sh '''
+          echo "PATH = ${PATH}"
+          echo "M2_HOME = ${M2_HOME}"
+        '''
+      }
+    }
     stage('Create Artifact BuildConfig') {
       when {
         expression {
