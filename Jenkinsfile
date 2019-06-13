@@ -49,6 +49,16 @@ pipeline {
         }
       }
     }
+    stage ('Execute Build to Native Binary') {
+      steps {
+          sh 'mvn clean package -Pnative' 
+      }
+      post {
+          success {
+              echo "Built native executable!"
+          }
+      }
+    }
     stage('Execute Artifact Build') {
       steps {
         script {
